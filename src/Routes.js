@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import ProductDetail from './pages/ProductDetail';
-import Productlist from './pages/Productlist';
+import Product from './pages/Product';
 import RecentList from './pages/RecentList';
 
 export default class Routes extends Component {
@@ -10,8 +9,7 @@ export default class Routes extends Component {
       <Router>
         <Switch>
           <Route exact path="/recentList" component={RecentList} />
-          <Route exact path="/product" component={Productlist} />
-          <Route exact path="/product/:id" component={ProductDetail} />
+          <Route exact path="/product/:id" component={Product} />
         </Switch>
       </Router>
     );
