@@ -92,9 +92,9 @@ class ProductCard extends Component {
       <>
         <CardWrap>
           <ImgBox>
-            <IconsX />
+            {/* <IconsX /> */}
             <ImgSample />
-            <IconsNextBtn />
+            {/* <IconsNextBtn /> */}
           </ImgBox>
           <CardContentsContainer>
             <CardContents>
