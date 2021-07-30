@@ -5,7 +5,8 @@ import { createBrowserHistory } from 'history';
 import { saveStore, getStore, updateProduct } from '../utils/storage';
 import { MAX, RANDOM_0_MAX } from '../utils/config';
 
-// 컴디업후 최근 이력 추가하려했으나, 로직상, onClick 이벤트 맨 마지막에 갱신하는게 자연스러워서 거기로 뺐습니다.
+// TODO 1. 최근 이력, 이미 본 상품 앞으로 끌어오는거
+// TODO 2. 00시 되면 최근 이력, unlike 갱신
 
 export default class Product extends Component {
   state = {
@@ -28,13 +29,11 @@ export default class Product extends Component {
     this.unlikeRef.current.addEventListener('click', this.onClickUnlike);
   }
 
-  // 첫 렌더링시, fetch data
-  // ls에 이미 있을시 fetch X, 랜덤만 해줌
+  // ls에 없을 때 fetch하고, 랜덤으로 상품 불러옴
   fetchProducts = async () => {
     if (getStore('productList').length) {
-      const randomProduct = this.getRandomProduct(RANDOM_0_MAX());
-      const assignedProduct = Object.assign(randomProduct, { unlike: false });
-      this.setState({ product: { ...this.state.product, ...assignedProduct } });
+      const randomProduct = this.getRandomProduct(RANDOM_0_MAX(), false);
+      this.setState({ product: { ...this.state.product, ...randomProduct } });
       return;
     }
 
@@ -45,13 +44,13 @@ export default class Product extends Component {
       JSON.stringify(products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el)))
     );
 
-    const randomProduct = this.getRandomProduct(RANDOM_0_MAX());
-    const assignedProduct = Object.assign(randomProduct, { unlike: false });
-    this.setState({ product: { ...this.state.product, ...assignedProduct } });
+    const randomProduct = this.getRandomProduct(RANDOM_0_MAX(), false);
+    this.setState({ product: { ...this.state.product, ...randomProduct } });
   };
 
+  // 랜덤으로 제품 가져오고, id와 unlike 할당한 product 객체 리턴하는 함수
   // TODO : 똑같은 상품 나올 시 앞으로 빼주는거
-  getRandomProduct = (_id) => {
+  getRandomProduct = (_id, _unlike) => {
     let randomProduct = getStore('productList')[_id];
     while (true) {
       // TODO 구현되면, 이거 필요 없음
@@ -64,40 +63,35 @@ export default class Product extends Component {
         break;
       }
 
-      _id = RANDOM_0_MAX();
+      _id = RANDOM_0_MAX(); // id 랜덤으로
     }
 
-    return Object.assign(randomProduct, { id: _id }); // 가져온 product에 id 갱신해서 리턴(바뀔수도있으므로)
+    return Object.assign(randomProduct, { id: _id, unlike: _unlike }); // 가져온 product에 id 갱신해서 리턴(바뀔수도있으므로)
   };
 
-  onClickRandom = () => {
-    const randomProduct = this.getRandomProduct(RANDOM_0_MAX());
-    const assignedProduct = Object.assign(randomProduct, { unlike: false }); // 가져온 product에 unlike값할당
-    this.setState({ product: { ...this.state.product, ...assignedProduct } }); // newProduct setState
-    updateProduct(assignedProduct); // ls에 product 정보 갱신
-    saveStore('recentViewed', assignedProduct); // ls에 최근이력 추가
+  // id와 unlike가 새로 할당된 product 객체를
+  // 1. setState, 2. ls의 product 갱신, 3. 최근이력에 추가해주는 함수
+  setProduct = (_product) => {
+    this.setState({ product: { ...this.state.product, ..._product } });
+    updateProduct(_product);
+    saveStore('recentViewed', _product);
   };
 
-  onClickUnlike = () => {
-    const randomProduct = this.getRandomProduct(RANDOM_0_MAX());
-    const assignedProduct = Object.assign(randomProduct, { unlike: true });
-    this.setState({ product: { ...this.state.product, ...assignedProduct } });
-    updateProduct(assignedProduct);
-    saveStore('recentViewed', assignedProduct);
-  };
+  onClickRandom = () => this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), false)); // unlike : false
+  onClickUnlike = () => this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), true)); // unlike : true
 
   render() {
     const { title, brand, price } = this.state.product;
 
     return (
       <Container>
-        <RandomButton ref={this.randomRef}>랜덤</RandomButton>
-        <UnlikeButton ref={this.unlikeRef}>관심없음</UnlikeButton>
         <div className='ProductCard'>
           <h3>{title}</h3>
           <h3>{brand}</h3>
           <h3>{price}</h3>
         </div>
+        <RandomButton ref={this.randomRef}>랜덤</RandomButton>
+        <UnlikeButton ref={this.unlikeRef}>관심없음</UnlikeButton>
       </Container>
     );
   }
