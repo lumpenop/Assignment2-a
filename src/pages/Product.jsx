@@ -1,7 +1,6 @@
 import React, { Component, createRef } from 'react';
 import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
-import { createBrowserHistory } from 'history';
 import { saveStore, removeStore } from '../utils/storage';
 
 export default class Product extends Component {
@@ -15,7 +14,6 @@ export default class Product extends Component {
     },
   };
 
-  history = createBrowserHistory;
   randomRef = createRef();
   unlikeRef = createRef();
 
@@ -62,7 +60,6 @@ export default class Product extends Component {
     this._id = Math.floor(Math.random() * 100);
     const newProduct = { ...this.state.product, unlike: true };
     this.setState({ product: newProduct });
-    // componentDidUpdate 발생
     this.getProduct(this._id);
   };
 
