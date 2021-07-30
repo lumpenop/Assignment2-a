@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { getStore } from '../utils/storage';
+
 export default class RecentList extends Component {
   state = {
     recentProducts: getStore('recentViewed'),
     recentFiltered: getStore('recentViewed'),
-
     brandList: [
       '전체브랜드',
       ...new Set(getStore('recentViewed').map((card) => card['brand'])),
     ],
+    isUnlike: true,
   };
 
   brandFiltered = (brandName) => {
@@ -20,6 +21,18 @@ export default class RecentList extends Component {
     this.setState({ recentFiltered: brandfilteredList });
   };
 
+  unlikeFiltered = (isChecked) => {
+    const { recentProducts, recentFiltered } = this.state;
+    if (isChecked) {
+      const unlikeFilteredList = recentFiltered.filter(
+        (card) => card.unlike === false
+      );
+      this.setState({ recentFiltered: unlikeFilteredList });
+    } else {
+      this.setState({ recentFiltered: recentProducts });
+    }
+  };
+
   brandClicked = (e) => {
     const clickedBrand = e.target.innerText;
     if (clickedBrand === '전체브랜드') {
@@ -27,6 +40,11 @@ export default class RecentList extends Component {
     } else {
       this.brandFiltered(clickedBrand);
     }
+  };
+
+  unlikeChecked = (e) => {
+    const isChecked = e.target.checked;
+    this.unlikeFiltered(isChecked);
   };
 
   componentDidMount() {}
@@ -42,6 +60,10 @@ export default class RecentList extends Component {
               {brandName}
             </BrandButton>
           ))}
+          <UnlikeDiv>
+            <UnlikeCheckBox onChange={(e) => this.unlikeChecked(e)} />
+            관심없는 상품 숨기기
+          </UnlikeDiv>
         </BrandButtonDiv>
         {recentFiltered.map((recentProduct, idx) => {
           const { brand, price, title } = recentProduct;
@@ -64,6 +86,7 @@ const ProductCardDiv = styled.div`
   height: 100px;
   background-color: skyblue;
 `;
+
 const BrandButtonDiv = styled.div`
   display: flex;
 `;
@@ -71,11 +94,20 @@ const BrandButton = styled.button`
   margin: 10px;
   padding: 10px;
   color: #fff;
-  background-color: black;
+  background-color: #353535;
   :hover {
     color: #000;
     background-color: #fff;
     transition: 0.5s;
     border: 1px solid #000;
   }
+`;
+
+const UnlikeDiv = styled.div``;
+
+const UnlikeCheckBox = styled.input.attrs({
+  type: 'checkbox',
+})`
+  border-radius: 5px;
+  color: red;
 `;

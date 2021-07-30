@@ -37,10 +37,8 @@ export default class Product extends Component {
     localStorage.setItem(
       'productList',
       JSON.stringify(
-        products.map((el, idx) =>
-          Object.assign({ id: idx, unlike: false }, el),
-        ),
-      ),
+        products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el))
+      )
     );
     const ramdomProducts = JSON.parse(localStorage.getItem('productList'));
     this.setState({ product: ramdomProducts[id] });
