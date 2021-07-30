@@ -2,7 +2,7 @@ import React, { Component, createRef } from 'react';
 import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
 import { createBrowserHistory } from 'history';
-import { saveStore } from '../utils/storage';
+import { saveStore, removeStore } from '../utils/storage';
 
 export default class Product extends Component {
   state = {
@@ -42,33 +42,27 @@ export default class Product extends Component {
         ),
       ),
     );
-    const ramdomProducts = JSON.parse(localStorage.getItem('productList'));
-    this.setState({ product: ramdomProducts[id] });
+    const newProducts = JSON.parse(localStorage.getItem('productList')).filter(
+      (product) => product.unlike === false,
+    );
+    this.setState({ product: newProducts[id] });
   };
 
   putProduct = async ({ id, unlike }) => {
     console.log(`[put product] id :${id} unlike : ${unlike}`);
   };
 
-  putRecentList = async () => {
-    // localStorage.setItem('recentViewed', JSON.stringify(this.state.product));
-    // const prevViewedLog = JSON.parse(localStorage.getItem('recentViewed'));
-    // console.log(prevViewedLog);
-    // localStorage.setItem(
-    //   'recentViewed',
-    //   JSON.stringify(prevViewedLog.concat(this.state.product)),
-    // );
-  };
-
   randomClicked = () => {
     this._id = Math.floor(Math.random() * 100);
-    this.putRecentList(this.state.product);
     this.getProduct(this._id);
   };
 
   unlikeClicked = () => {
+    removeStore('recentViewed', this.state.product);
     this._id = Math.floor(Math.random() * 100);
-    this.putProduct({ ...this.state.product, unlike: true, id: this._id });
+    const newProduct = { ...this.state.product, unlike: true };
+    this.setState({ product: newProduct });
+    // componentDidUpdate 발생
     this.getProduct(this._id);
   };
 
