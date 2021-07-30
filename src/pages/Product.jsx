@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react';
 import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
 import { createBrowserHistory } from 'history';
+import { saveStore } from '../utils/storage';
 
 export default class Product extends Component {
   state = {
@@ -24,31 +25,46 @@ export default class Product extends Component {
     this.unlikeRef.current.addEventListener('click', this.unlikeClicked);
   }
 
-  //TODO: replace to localStorage func
+  componentDidUpdate(_, prevState) {
+    if (prevState.product !== this.state.product) {
+      saveStore('recentViewed', this.state.product);
+    }
+  }
+
   getProduct = async (id) => {
     const res = await fetchGet(`http://localhost:3000/data/productData.json`);
     const products = await res.json();
-    this.setState({ product: products[id] });
+    localStorage.setItem(
+      'productList',
+      JSON.stringify(products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el)))
+    );
+    const ramdomProducts = JSON.parse(localStorage.getItem('productList'));
+    this.setState({ product: ramdomProducts[id] });
   };
 
-  //TODO: change to localStorage Func
   putProduct = async ({ id, unlike }) => {
     console.log(`[put product] id :${id} unlike : ${unlike}`);
   };
-  //TODO: change to localStorage Func
-  putRecentList = async ({ id, unlike }) => {
-    console.log(`[push to recentList] id :${id} unlike : ${unlike}`);
+
+  putRecentList = async () => {
+    // localStorage.setItem('recentViewed', JSON.stringify(this.state.product));
+    // const prevViewedLog = JSON.parse(localStorage.getItem('recentViewed'));
+    // console.log(prevViewedLog);
+    // localStorage.setItem(
+    //   'recentViewed',
+    //   JSON.stringify(prevViewedLog.concat(this.state.product)),
+    // );
   };
 
   randomClicked = () => {
     this._id = Math.floor(Math.random() * 100);
-    this.putRecentList({ ...this.state.product, unlike: true, id: this._id });
+    this.putRecentList(this.state.product);
     this.getProduct(this._id);
   };
 
   unlikeClicked = () => {
     this._id = Math.floor(Math.random() * 100);
-    this.putProduct({ ...this.state.product, unlike: false, id: this._id });
+    this.putProduct({ ...this.state.product, unlike: true, id: this._id });
     this.getProduct(this._id);
   };
 
