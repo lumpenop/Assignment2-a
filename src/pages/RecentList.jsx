@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import styled from 'styled-components';
 import { getStore } from '../utils/storage';
 
@@ -9,13 +9,39 @@ export default class RecentList extends Component {
     brandList: [],
   };
 
+  lowPriceViewRef = createRef();
+  highPriceViewRef = createRef();
+  recentViewRef = createRef();
+
   componentDidMount() {
     this.setState({
       recentProducts: getStore('recentViewed'),
       recentFiltered: getStore('recentViewed'),
       brandList: this.setBrandList(),
     });
+    this.lowPriceViewRef.current.addEventListener(
+      'click',
+      this.onClickLowPriceView
+    );
+    this.highPriceViewRef.current.addEventListener(
+      'click',
+      this.setHighPriceOrder
+    );
+    this.recentViewRef.current.addEventListener(
+      'click',
+      this.onClickRecentView
+    );
   }
+
+  onClickLowPriceView = () => {
+    this.setLowPriceOrder();
+  };
+  onClickHighPriceView = () => {
+    this.setHighPriceOrder();
+  };
+  onClickRecentView = () => {
+    this.setRecentViewOrder();
+  };
 
   onCheckUnlike = (e) => {
     const isChecked = e.target.checked;
@@ -24,7 +50,7 @@ export default class RecentList extends Component {
 
   onClickBrand = (e) => {
     const clickedBrand = e.target.innerText;
-    const { brandList } = this.state;
+    const { brandList, recentProducts } = this.state;
 
     if (clickedBrand === '전체브랜드') {
       brandList.forEach((brand) => {
@@ -32,7 +58,7 @@ export default class RecentList extends Component {
           brand.isFilter = true;
         else if (brand.name !== clickedBrand) brand.isFilter = false;
       });
-      this.setState({ recentFiltered: this.state.recentProducts });
+      this.setState({ recentFiltered: recentProducts });
     } else {
       brandList.forEach((brand) => {
         if (brand.name === clickedBrand) brand.isFilter = !brand.isFilter;
@@ -49,7 +75,7 @@ export default class RecentList extends Component {
     const brandState = brandList.map((brand) =>
       Object.assign({ name: brand, isFilter: false })
     );
-    brandState.unshift({ name: '전체브랜드', isFilter: false });
+    brandState.unshift({ name: '전체브랜드', isFilter: true });
     return brandState;
   };
 
@@ -79,6 +105,28 @@ export default class RecentList extends Component {
     });
   };
 
+  setLowPriceOrder = () => {
+    const { recentFiltered } = this.state;
+    const orderedList = recentFiltered.sort((a, b) => {
+      return a.price < b.price ? -1 : a.price > b.price ? 1 : 0;
+    });
+    this.setState({ recentFiltered: orderedList });
+  };
+  setHighPriceOrder = () => {
+    const { recentFiltered } = this.state;
+    const orderedList = recentFiltered.sort((a, b) => {
+      return a.price < b.price ? 1 : a.price > b.price ? -1 : 0;
+    });
+    this.setState({ recentFiltered: orderedList });
+  };
+  setRecentViewOrder = () => {
+    const { recentProducts, recentFiltered } = this.state;
+    console.log('리센트 프러덕', recentProducts);
+    console.log('리센트 필터드', recentFiltered);
+
+    this.setState({ recentFiltered: recentProducts });
+  };
+
   render() {
     const { recentFiltered, brandList } = this.state;
     return (
@@ -98,6 +146,17 @@ export default class RecentList extends Component {
             <UnlikeCheckBox onChange={(e) => this.onCheckUnlike(e)} />
             관심없는 상품 숨기기
           </UnlikeDiv>
+          <ViewDiv>
+            <ViewLowPriceButton ref={this.lowPriceViewRef}>
+              낮은 가격 순
+            </ViewLowPriceButton>
+            <ViewHighPriceButton ref={this.highPriceViewRef}>
+              높은 가격 순
+            </ViewHighPriceButton>
+            <ViewRecentButton ref={this.recentViewRef}>
+              최근 조회 순
+            </ViewRecentButton>
+          </ViewDiv>
         </BrandButtonDiv>
         {recentFiltered.map((recentProduct, idx) => {
           const { brand, price, title } = recentProduct;
@@ -139,4 +198,26 @@ const UnlikeCheckBox = styled.input.attrs({
 })`
   border-radius: 5px;
   color: red;
+`;
+const ViewDiv = styled.div``;
+const ViewRecentButton = styled.button`
+  margin: 10px;
+  padding: 10px;
+  color: ${(props) => (props.isFilter ? '#fff' : '#000')};
+  background-color: ${(props) => (props.isFilter ? '#000 ' : '#fff')};
+  border: 1px solid #000;
+`;
+const ViewLowPriceButton = styled.button`
+  margin: 10px;
+  padding: 10px;
+  color: ${(props) => (props.isFilter ? '#fff' : '#000')};
+  background-color: ${(props) => (props.isFilter ? '#000 ' : '#fff')};
+  border: 1px solid #000;
+`;
+const ViewHighPriceButton = styled.button`
+  margin: 10px;
+  padding: 10px;
+  color: ${(props) => (props.isFilter ? '#fff' : '#000')};
+  background-color: ${(props) => (props.isFilter ? '#000 ' : '#fff')};
+  border: 1px solid #000;
 `;
