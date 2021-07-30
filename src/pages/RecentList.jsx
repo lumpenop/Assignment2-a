@@ -4,22 +4,25 @@ import { getStore } from '../utils/storage';
 
 export default class RecentList extends Component {
   state = {
-    recentProducts: getStore('recentViewed'),
-    recentFiltered: getStore('recentViewed'),
-    brandList: [
-      '전체브랜드',
-      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
-    ],
-    isUnlike: true,
+    recentProducts: [],
+    recentFiltered: [],
+    brandList: [],
   };
 
-  brandFiltered = (brandName) => {
-    const { recentProducts } = this.state;
-    const brandfilteredList = recentProducts.filter(
-      (card) => card.brand === brandName
-    );
-    this.setState({ recentFiltered: brandfilteredList });
-  };
+  componentDidMount() {
+    const brandState = [{ name: '전체브랜드', isFilter: false }];
+    const tempBrandList = [
+      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
+    ];
+    tempBrandList.map((brandName) => {
+      brandState.push({ name: brandName, isFilter: false });
+    });
+    this.setState({
+      recentProducts: getStore('recentViewed'),
+      recentFiltered: getStore('recentViewed'),
+      brandList: brandState,
+    });
+  }
 
   unlikeFiltered = (isChecked) => {
     const { recentProducts, recentFiltered } = this.state;
@@ -29,16 +32,8 @@ export default class RecentList extends Component {
       );
       this.setState({ recentFiltered: unlikeFilteredList });
     } else {
+      // this.brandFiltered();
       this.setState({ recentFiltered: recentProducts });
-    }
-  };
-
-  brandClicked = (e) => {
-    const clickedBrand = e.target.innerText;
-    if (clickedBrand === '전체브랜드') {
-      this.setState({ recentFiltered: this.state.recentProducts });
-    } else {
-      this.brandFiltered(clickedBrand);
     }
   };
 
@@ -47,17 +42,60 @@ export default class RecentList extends Component {
     this.unlikeFiltered(isChecked);
   };
 
-  componentDidMount() {}
+  brandFiltered = () => {
+    const { recentProducts, brandList } = this.state;
+    const filterBrand = [];
+    brandList.map((brand) => {
+      if (brand.isFilter === true) {
+        filterBrand.push(brand.name);
+      }
+    });
+
+    const filteredProducts = recentProducts.filter((card) =>
+      filterBrand.includes(card.brand)
+    );
+    this.setState({ recentFiltered: filteredProducts });
+  };
+  brandClicked = (e) => {
+    const { brandList } = this.state;
+    const clickedBrand = e.target.innerText;
+    if (clickedBrand === '전체브랜드') {
+      brandList.map((brand) => {
+        if (brand.name === clickedBrand) {
+          brand.isFilter = !brand.isFilter;
+        } else {
+          brand.isFilter = false;
+        }
+      });
+      this.setState({ recentFiltered: this.state.recentProducts });
+    } else {
+      brandList.map((brand) => {
+        if (brand.name === clickedBrand) {
+          brand.isFilter = !brand.isFilter;
+        }
+        if (brand.name === '전체브랜드') {
+          brand.isFilter = false;
+        }
+      });
+      this.brandFiltered();
+    }
+  };
+
   componentDidUpdate() {}
 
   render() {
     const { recentFiltered, brandList } = this.state;
     return (
       <RecentListDiv>
+        <h1>상품조회이력</h1>
         <BrandButtonDiv>
-          {brandList.map((brandName, idx) => (
-            <BrandButton key={idx} onClick={(e) => this.brandClicked(e)}>
-              {brandName}
+          {brandList.map((brand, idx) => (
+            <BrandButton
+              key={idx}
+              isFilter={brand.isFilter}
+              onClick={(e) => this.brandClicked(e)}
+            >
+              {brand.name}
             </BrandButton>
           ))}
           <UnlikeDiv>
@@ -93,14 +131,9 @@ const BrandButtonDiv = styled.div`
 const BrandButton = styled.button`
   margin: 10px;
   padding: 10px;
-  color: #fff;
-  background-color: #353535;
-  :hover {
-    color: #000;
-    background-color: #fff;
-    transition: 0.5s;
-    border: 1px solid #000;
-  }
+  color: ${(props) => (props.isFilter ? '#fff' : '#000')};
+  background-color: ${(props) => (props.isFilter ? '#000 ' : '#fff')};
+  border: 1px solid #000;
 `;
 
 const UnlikeDiv = styled.div``;
