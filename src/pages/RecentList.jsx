@@ -51,7 +51,7 @@ export default class RecentList extends Component {
   onClickBrand = (e) => {
     const clickedBrand = e.target.innerText;
     const { brandList, recentProducts } = this.state;
-
+    //전체브랜드 스타일 지정 미완
     if (clickedBrand === '전체브랜드') {
       brandList.forEach((brand) => {
         if (brand.name === clickedBrand && !brand.isFilter)
@@ -66,6 +66,20 @@ export default class RecentList extends Component {
       });
       this.setBrandFilter();
     }
+  };
+
+  onClickToProductPage = (e) => {
+    const productId = e.target.closest('div').id;
+    this.setIsRouting(parseInt(productId));
+  };
+  // 상품상세페이지 이동 미완
+  setIsRouting = (id) => {
+    const { recentProducts } = this.state;
+    recentProducts.forEach((product) => {
+      if (product.id === id)
+        if (product.unlike) alert('해당 상품은 관심없음 대상의 상품입니다.');
+        else document.location.href = `/product`;
+    });
   };
 
   setBrandList = () => {
@@ -119,11 +133,9 @@ export default class RecentList extends Component {
     });
     this.setState({ recentFiltered: orderedList });
   };
+  //최근 조회순 미완
   setRecentViewOrder = () => {
     const { recentProducts, recentFiltered } = this.state;
-    console.log('리센트 프러덕', recentProducts);
-    console.log('리센트 필터드', recentFiltered);
-
     this.setState({ recentFiltered: recentProducts });
   };
 
@@ -158,10 +170,14 @@ export default class RecentList extends Component {
             </ViewRecentButton>
           </ViewDiv>
         </BrandButtonDiv>
-        {recentFiltered.map((recentProduct, idx) => {
-          const { brand, price, title } = recentProduct;
+        {recentFiltered.map((recentProduct) => {
+          const { id, brand, price, title } = recentProduct;
           return (
-            <ProductCardDiv key={idx}>
+            <ProductCardDiv
+              key={id}
+              id={id}
+              onClick={(e) => this.onClickToProductPage(e)}
+            >
               <h3>{title}</h3>
               <h3>{brand}</h3>
               <h3>{price}</h3>
@@ -178,6 +194,7 @@ const ProductCardDiv = styled.div`
   width: fit-content;
   height: 100px;
   background-color: skyblue;
+  cursor: pointer;
 `;
 
 const BrandButtonDiv = styled.div`
