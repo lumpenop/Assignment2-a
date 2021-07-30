@@ -1,63 +1,55 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { fetchGet } from '../utils/fetches';
-
+import { getStore } from '../utils/storage';
 export default class RecentList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      recentList: [],
-      brandList: [],
-      viewList: [],
-    };
-    this.handleClickBrand = (e) => {
-      const clickedBrand = e.target.innerText;
-      if (clickedBrand === '전체브랜드') {
-        this.setState({ viewList: this.state.recentList });
-      } else {
-        this.setBrandList(clickedBrand);
-      }
-    };
-    this.setBrandList = (brandName) => {
-      const { recentList } = this.state;
+  state = {
+    recentProducts: getStore('recentViewed'),
+    recentFiltered: getStore('recentViewed'),
 
-      const brandfilteredList = recentList.filter(
-        (card) => card.brand === brandName
-      );
-      this.setState({ viewList: brandfilteredList });
-    };
-  }
-  componentDidMount() {
-    fetchGet('data/productData.json')
-      .then((res) => res.json())
-      .then((data) => {
-        this.setState({ recentList: data.slice(0, 10) });
-        this.setState({ viewList: data.slice(0, 10) });
-        this.setState({
-          brandList: [
-            '전체브랜드',
-            ...new Set(this.state.recentList.map((card) => card['brand'])),
-          ],
-        });
-      });
-  }
+    brandList: [
+      '전체브랜드',
+      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
+    ],
+  };
+
+  brandFiltered = (brandName) => {
+    const { recentProducts } = this.state;
+    const brandfilteredList = recentProducts.filter(
+      (card) => card.brand === brandName
+    );
+    this.setState({ recentFiltered: brandfilteredList });
+  };
+
+  brandClicked = (e) => {
+    const clickedBrand = e.target.innerText;
+    if (clickedBrand === '전체브랜드') {
+      this.setState({ recentFiltered: this.state.recentProducts });
+    } else {
+      this.brandFiltered(clickedBrand);
+    }
+  };
+
+  componentDidMount() {}
+  componentDidUpdate() {}
+
   render() {
-    const { brandList, viewList } = this.state;
-
+    const { recentFiltered, brandList } = this.state;
     return (
       <RecentListDiv>
         <BrandButtonDiv>
           {brandList.map((brandName, idx) => (
-            <BrandButton key={idx} onClick={(e) => this.handleClickBrand(e)}>
+            <BrandButton key={idx} onClick={(e) => this.brandClicked(e)}>
               {brandName}
             </BrandButton>
           ))}
         </BrandButtonDiv>
-        {viewList.map((card, idx) => {
-          const { brand, price, title } = card;
+        {recentFiltered.map((recentProduct, idx) => {
+          const { brand, price, title } = recentProduct;
           return (
             <ProductCardDiv key={idx}>
-              {brand} {price} {title}
+              <h3>{title}</h3>
+              <h3>{brand}</h3>
+              <h3>{price}</h3>
             </ProductCardDiv>
           );
         })}
@@ -68,7 +60,7 @@ export default class RecentList extends Component {
 
 const RecentListDiv = styled.div``;
 const ProductCardDiv = styled.div`
-  width: 200px;
+  width: fit-content;
   height: 100px;
   background-color: skyblue;
 `;
