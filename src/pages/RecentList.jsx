@@ -10,78 +10,74 @@ export default class RecentList extends Component {
   };
 
   componentDidMount() {
-    const brandState = [{ name: '전체브랜드', isFilter: false }];
-    const tempBrandList = [
-      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
-    ];
-    tempBrandList.map((brandName) => {
-      brandState.push({ name: brandName, isFilter: false });
-    });
     this.setState({
       recentProducts: getStore('recentViewed'),
       recentFiltered: getStore('recentViewed'),
-      brandList: brandState,
+      brandList: this.setBrandList(),
     });
   }
 
-  unlikeFiltered = (isChecked) => {
+  onCheckUnlike = (e) => {
+    const isChecked = e.target.checked;
+    this.setUnlikeFilter(isChecked);
+  };
+
+  onClickBrand = (e) => {
+    const clickedBrand = e.target.innerText;
+    const { brandList } = this.state;
+
+    if (clickedBrand === '전체브랜드') {
+      brandList.forEach((brand) => {
+        if (brand.name === clickedBrand && !brand.isFilter)
+          brand.isFilter = true;
+        else if (brand.name !== clickedBrand) brand.isFilter = false;
+      });
+      this.setState({ recentFiltered: this.state.recentProducts });
+    } else {
+      brandList.forEach((brand) => {
+        if (brand.name === clickedBrand) brand.isFilter = !brand.isFilter;
+        if (brand.name === '전체브랜드') brand.isFilter = false;
+      });
+      this.setBrandFilter();
+    }
+  };
+
+  setBrandList = () => {
+    const brandList = [
+      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
+    ];
+    const brandState = brandList.map((brand) =>
+      Object.assign({ name: brand, isFilter: false })
+    );
+    brandState.unshift({ name: '전체브랜드', isFilter: false });
+    return brandState;
+  };
+
+  setUnlikeFilter = (isChecked) => {
     const { recentProducts, recentFiltered } = this.state;
     if (isChecked) {
       const unlikeFilteredList = recentFiltered.filter(
         (card) => card.unlike === false
       );
       this.setState({ recentFiltered: unlikeFilteredList });
-    } else {
-      // this.brandFiltered();
-      this.setState({ recentFiltered: recentProducts });
-    }
+    } else this.setState({ recentFiltered: recentProducts });
   };
 
-  unlikeChecked = (e) => {
-    const isChecked = e.target.checked;
-    this.unlikeFiltered(isChecked);
-  };
-
-  brandFiltered = () => {
+  setBrandFilter = () => {
     const { recentProducts, brandList } = this.state;
     const filterBrand = [];
-    brandList.map((brand) => {
-      if (brand.isFilter === true) {
-        filterBrand.push(brand.name);
-      }
+    brandList.forEach((brand) => {
+      if (brand.isFilter === true) filterBrand.push(brand.name);
     });
 
     const filteredProducts = recentProducts.filter((card) =>
       filterBrand.includes(card.brand)
     );
-    this.setState({ recentFiltered: filteredProducts });
+    this.setState({
+      recentFiltered:
+        filteredProducts.length > 0 ? filteredProducts : recentProducts,
+    });
   };
-  brandClicked = (e) => {
-    const { brandList } = this.state;
-    const clickedBrand = e.target.innerText;
-    if (clickedBrand === '전체브랜드') {
-      brandList.map((brand) => {
-        if (brand.name === clickedBrand) {
-          brand.isFilter = !brand.isFilter;
-        } else {
-          brand.isFilter = false;
-        }
-      });
-      this.setState({ recentFiltered: this.state.recentProducts });
-    } else {
-      brandList.map((brand) => {
-        if (brand.name === clickedBrand) {
-          brand.isFilter = !brand.isFilter;
-        }
-        if (brand.name === '전체브랜드') {
-          brand.isFilter = false;
-        }
-      });
-      this.brandFiltered();
-    }
-  };
-
-  componentDidUpdate() {}
 
   render() {
     const { recentFiltered, brandList } = this.state;
@@ -93,13 +89,13 @@ export default class RecentList extends Component {
             <BrandButton
               key={idx}
               isFilter={brand.isFilter}
-              onClick={(e) => this.brandClicked(e)}
+              onClick={(e) => this.onClickBrand(e)}
             >
               {brand.name}
             </BrandButton>
           ))}
           <UnlikeDiv>
-            <UnlikeCheckBox onChange={(e) => this.unlikeChecked(e)} />
+            <UnlikeCheckBox onChange={(e) => this.onCheckUnlike(e)} />
             관심없는 상품 숨기기
           </UnlikeDiv>
         </BrandButtonDiv>

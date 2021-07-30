@@ -31,3 +31,9 @@ export function removeStore(key, value) {
     localStorage.setItem(key, JSON.stringify(prevStored));
   }
 }
+
+export function updateProduct(product) {
+  let allProducts = getStore('productList');
+  allProducts[product.id] = product;
+  localStorage.setItem('productList', JSON.stringify(allProducts));
+}
