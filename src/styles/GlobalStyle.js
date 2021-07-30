@@ -31,6 +31,10 @@ const GlobalStyle = createGlobalStyle`
     outline: none;
     cursor: pointer;
   }
+
+  button {
+    user-select:none;
+  }
 `;
 
 export default GlobalStyle;

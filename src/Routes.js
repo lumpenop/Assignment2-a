@@ -8,8 +8,8 @@ export default class Routes extends Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/recentList" component={RecentList} />
-          <Route exact path="/product/:id" component={Product} />
+          <Route exact path='/recentList' component={RecentList} />
+          <Route exact path='/product' component={Product} />
         </Switch>
       </Router>
     );
