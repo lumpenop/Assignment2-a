@@ -41,9 +41,10 @@ export default class Product extends Component {
     const products = await res.json();
     localStorage.setItem(
       'productList',
-      JSON.stringify(products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el)))
+      JSON.stringify(
+        products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el))
+      )
     );
-
     const randomProduct = this.getRandomProduct(RANDOM_0_MAX(), false);
     this.setState({ product: { ...this.state.product, ...randomProduct } });
   };
@@ -59,7 +60,10 @@ export default class Product extends Component {
       }
 
       // 현재와 다른 제품, unlike === false 아니면 다시 돌리기
-      if (this.state.product.id !== _id && getStore('productList')[_id].unlike === false) {
+      if (
+        this.state.product.id !== _id &&
+        getStore('productList')[_id].unlike === false
+      ) {
         break;
       }
 
@@ -77,15 +81,17 @@ export default class Product extends Component {
     saveStore('recentViewed', _product);
   };
 
-  onClickRandom = () => this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), false)); // unlike : false
-  onClickUnlike = () => this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), true)); // unlike : true
+  onClickRandom = () =>
+    this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), false)); // unlike : false
+  onClickUnlike = () =>
+    this.setProduct(this.getRandomProduct(RANDOM_0_MAX(), true)); // unlike : true
 
   render() {
     const { title, brand, price } = this.state.product;
 
     return (
       <Container>
-        <div className='ProductCard'>
+        <div className="ProductCard">
           <h3>{title}</h3>
           <h3>{brand}</h3>
           <h3>{price}</h3>
