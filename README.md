@@ -8,9 +8,9 @@ Mr.Camel : 고객들이 원하는 상품 목록을 위한 사용자의 상품 �
 ## 😀 프로젝트 Memebers
 |이름|GitHub|담당|
 |------|---|---|
-|김승원|[lumpenop](https://github.com/lumpenop)|공통 StyledComponent|
-|남택훈|[tech-hoon](https://github.com/tech-hoon)|recent 페이지 |
-|이상훈|[simoniful](https://github.com/simoniful) |Storage관리 와 Utils생성|
+|김승원|[lumpenop](https://github.com/lumpenop)|공통 Styled Component|
+|남택훈|[tech-hoon](https://github.com/tech-hoon)|Product 페이지|
+|이상훈|[simoniful](https://github.com/simoniful) |Storage 관리와 Utils 생성|
 |최인경|[ink-0](https://github.com/ink-0)|recentList 페이지|
 
 ## 🪄 실행 방법
@@ -66,7 +66,6 @@ Mr.Camel : 고객들이 원하는 상품 목록을 위한 사용자의 상품 �
  ┃ ┣ 📜config.js
  ┃ ┣ 📜fetches.js
  ┃ ┗ 📜storage.js
- ┣ 📜Routes.js
  ┣ 📜Routes.js
  ┗ 📜index.js
 ```
