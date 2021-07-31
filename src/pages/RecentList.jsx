@@ -32,6 +32,10 @@ export default class RecentList extends Component {
     this.setUnlikeFilter(isChecked);
   };
 
+  componentDidUpdate() {
+    isExpired();
+  }
+
   onClickBrand = (e) => {
     const clickedBrand = e.target.innerText;
     const { brandList, recentProducts } = this.state;
