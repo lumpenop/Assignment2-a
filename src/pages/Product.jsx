@@ -3,12 +3,11 @@ import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
 import { createBrowserHistory } from 'history';
 import { saveStore, getStore, updateProduct } from '../utils/storage';
-import { MAX, RANDOM_0_MAX } from '../utils/config';
+import { MAX, RANDOM_0_MAX, CARD_WRAP_SIZE } from '../utils/config';
 
 import ProductCard from '../components/ProductCard';
 import iconsX from '../components/images/icons_X.png';
 import iconsNextBtn from '../components/images/icons_nextBlue.png';
-
 
 
 // TODO 1. 최근 이력, 이미 본 상품 앞으로 끌어오는거
@@ -106,41 +105,41 @@ export default class Product extends Component {
 //TODO: CSS Styling
 const Container = styled.div`
   position: relative;
-  width: 200px;
+  width: ${CARD_WRAP_SIZE}px;
   margin: 0 auto;
 `;
 
 const JustButton = styled.button`
   position: absolute;
-  top: 8px;
-  right: 6px;
+  top: ${CARD_WRAP_SIZE * 0.04}px;
+  right: ${CARD_WRAP_SIZE * 0.03}px;
 `;
 
 const UnlikeButton = styled(JustButton)``;
 
 const RandomButton = styled(JustButton)`
-  top: 160px;
-  right: 15px;
+  top: ${CARD_WRAP_SIZE * 0.8}px;
+  right: ${CARD_WRAP_SIZE * 0.075}px;
 `;
 
 const IconsX = styled.img.attrs({
       src: iconsX,
     })`
-  width: 38px;
-  height: 35px;
+  width: ${CARD_WRAP_SIZE * 0.2}px;
+  height: ${CARD_WRAP_SIZE * 0.18}px;
   filter: invert(100%) drop-shadow(0 0 0 black);
   &:hover{
     filter: invert(40%);
   }
-`
+`;
 const IconsNextBtn = styled.img.attrs({
   src: iconsNextBtn,
 })`
-  width: 40px;
-  height: 40px;
+  width: ${CARD_WRAP_SIZE * 0.2}px;
+  height: ${CARD_WRAP_SIZE * 0.2}px;
   filter: opacity(0.9) drop-shadow(0 0 0 blue);
   &:hover {
     filter: opacity(0.70) drop-shadow(0 0 0 #0067A3);
   }
-`
+`;
 
