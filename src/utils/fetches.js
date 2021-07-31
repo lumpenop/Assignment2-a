@@ -4,7 +4,7 @@ export const fetchPost = (api, obj) => {
   const token = getToken();
   const headers = Object.assign(
     { 'Content-Type': 'application/json' },
-    token ? { Authorization: token } : null,
+    token ? { Authorization: token } : null
   );
 
   const options = {
@@ -21,7 +21,7 @@ export const fetchDelete = (api) => {
 
   const headers = Object.assign(
     { 'Content-Type': 'application/json' },
-    token ? { Authorization: token } : null,
+    token ? { Authorization: token } : null
   );
   const options = { method: 'DELETE', headers };
 
@@ -33,7 +33,7 @@ export const fetchGet = (api) => {
 
   const headers = Object.assign(
     { 'Content-Type': 'application/json' },
-    token ? { Authorization: token } : null,
+    token ? { Authorization: token } : null
   );
   const options = { method: 'GET', headers };
 
@@ -45,7 +45,7 @@ export const fetchPut = (api, obj) => {
 
   const headers = Object.assign(
     { 'Content-Type': 'application/json' },
-    token ? { Authorization: token } : null,
+    token ? { Authorization: token } : null
   );
 
   const options = {
@@ -62,7 +62,7 @@ export const fetchPatch = (api, obj) => {
 
   const headers = Object.assign(
     { 'Content-Type': 'application/json' },
-    token ? { Authorization: token } : null,
+    token ? { Authorization: token } : null
   );
 
   const options = {
