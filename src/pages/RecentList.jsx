@@ -1,6 +1,6 @@
 import React, { Component, createRef } from 'react';
 import styled from 'styled-components';
-import { getStore } from '../utils/storage';
+import { getStore, isExpired } from '../utils/storage';
 
 export default class RecentList extends Component {
   state = {
@@ -22,6 +22,10 @@ export default class RecentList extends Component {
     this.lowPriceViewRef.current.addEventListener('click', this.onClickLowPriceView);
     this.highPriceViewRef.current.addEventListener('click', this.setHighPriceOrder);
     this.recentViewRef.current.addEventListener('click', this.onClickRecentView);
+  }
+
+  componentDidUpdate() {
+    isExpired();
   }
 
   onClickLowPriceView = () => this.setLowPriceOrder();
