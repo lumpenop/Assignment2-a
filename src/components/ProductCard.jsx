@@ -6,9 +6,8 @@ import { CARD_FONT_SIZE, CARD_WRAP_SIZE } from '../utils/config';
 class ProductCard extends Component {
   render() {
     const { price, brand, title } = this.props.product;
-
     return (
-      <CardWrap>
+      <CardWrap onClick={this.props.onClick}>
         <ImgBox>
           <ImgSample />
         </ImgBox>
