@@ -39,7 +39,11 @@ export default class Product extends Component {
       const products = await res.json();
       localStorage.setItem(
         'productList',
-        JSON.stringify(products.map((el, idx) => Object.assign({ id: idx, unlike: false }, el)))
+        JSON.stringify(
+          products.map((el, idx) =>
+            Object.assign({ id: idx, unlike: false }, el)
+          )
+        )
       );
     }
 
@@ -56,7 +60,10 @@ export default class Product extends Component {
     let product = getStore('productList')[_id];
 
     while (true) {
-      if (this.state.product.id !== _id && getStore('productList')[_id].unlike === false) {
+      if (
+        this.state.product.id !== _id &&
+        getStore('productList')[_id].unlike === false
+      ) {
         break;
       }
 
