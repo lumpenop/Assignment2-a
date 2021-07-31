@@ -2,14 +2,11 @@ import React, { Component, createRef } from 'react';
 import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
 import { createBrowserHistory } from 'history';
-import { getStore, updateProduct, pushRecentList } from '../utils/storage';
+import { getStore, updateProduct, pushRecentList, isExpired } from '../utils/storage';
 import { RANDOM_0_MAX, CARD_WRAP_SIZE } from '../utils/config';
-
 import ProductCard from '../components/ProductCard';
 import iconsX from '../components/images/icons_X.png';
 import iconsNextBtn from '../components/images/icons_nextBlue.png';
-
-// TODO 00시 되면 최근 이력, unlike 갱신
 
 export default class Product extends Component {
   state = {
@@ -33,6 +30,10 @@ export default class Product extends Component {
     this.unlikeRef.current.addEventListener('click', this.onClickUnlike);
   }
 
+  componentDidUpdate() {
+    isExpired() && this.fetchProducts();
+  }
+
   fetchProducts = async (_id) => {
     if (!getStore('productList').length) {
       const res = await fetchGet(`http://localhost:3000/data/productData.json`);
@@ -53,17 +54,15 @@ export default class Product extends Component {
   };
 
   getProduct = (_id, _unlike) => {
-    let product = getStore('productList')[_id];
-
     while (true) {
-      if (this.state.product.id !== _id && getStore('productList')[_id].unlike === false) {
-        break;
-      }
+      let newProduct = getStore('productList')[_id];
 
-      _id = RANDOM_0_MAX();
+      if (this.state.product.id === _id || newProduct.unlike === true) {
+        _id = RANDOM_0_MAX();
+        newProduct = getStore('productList')[__dirname];
+        continue;
+      } else return Object.assign(newProduct, { id: _id, unlike: _unlike });
     }
-
-    return Object.assign(product, { id: _id, unlike: _unlike });
   };
 
   setProduct = (_product) => {
@@ -78,6 +77,7 @@ export default class Product extends Component {
   render() {
     return (
       <Container>
+        {this.state.product.id}
         <ProductCard product={this.state.product} />
         <RandomButton ref={this.randomRef}>
           <IconsNextBtn />
@@ -90,7 +90,6 @@ export default class Product extends Component {
   }
 }
 
-//TODO: CSS Styling
 const Container = styled.div`
   position: relative;
   width: ${CARD_WRAP_SIZE}px;
