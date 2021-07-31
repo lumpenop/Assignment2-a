@@ -3,7 +3,12 @@ import { fetchGet } from '../utils/fetches';
 import styled from 'styled-components';
 import { createBrowserHistory } from 'history';
 import { saveStore, getStore, updateProduct } from '../utils/storage';
-import { MAX, RANDOM_0_MAX } from '../utils/config';
+import { MAX, RANDOM_0_MAX, CARD_WRAP_SIZE } from '../utils/config';
+
+import ProductCard from '../components/ProductCard';
+import iconsX from '../components/images/icons_X.png';
+import iconsNextBtn from '../components/images/icons_nextBlue.png';
+
 
 // TODO 1. 최근 이력, 이미 본 상품 앞으로 끌어오는거
 // TODO 2. 00시 되면 최근 이력, unlike 갱신
@@ -91,27 +96,56 @@ export default class Product extends Component {
 
     return (
       <Container>
-        <div className="ProductCard">
-          <h3>{title}</h3>
-          <h3>{brand}</h3>
-          <h3>{price}</h3>
-        </div>
-        <RandomButton ref={this.randomRef}>랜덤</RandomButton>
-        <UnlikeButton ref={this.unlikeRef}>관심없음</UnlikeButton>
+        <ProductCard product={this.state.product} />
+        <RandomButton ref={this.randomRef}>
+          <IconsNextBtn />
+        </RandomButton>
+        <UnlikeButton ref={this.unlikeRef}>
+          <IconsX />
+        </UnlikeButton>
       </Container>
     );
   }
 }
 
 //TODO: CSS Styling
-const Container = styled.div``;
-
-const UnlikeButton = styled.button`
-  border: 1px solid black;
-  border-radius: 25px;
+const Container = styled.div`
+  position: relative;
+  width: ${CARD_WRAP_SIZE}px;
+  margin: 0 auto;
 `;
 
-const RandomButton = styled.button`
-  border: 1px solid black;
-  border-radius: 25px;
+const JustButton = styled.button`
+  position: absolute;
+  top: ${CARD_WRAP_SIZE * 0.04}px;
+  right: ${CARD_WRAP_SIZE * 0.03}px;
 `;
+
+const UnlikeButton = styled(JustButton)``;
+
+const RandomButton = styled(JustButton)`
+  top: ${CARD_WRAP_SIZE * 0.8}px;
+  right: ${CARD_WRAP_SIZE * 0.075}px;
+`;
+
+const IconsX = styled.img.attrs({
+      src: iconsX,
+    })`
+  width: ${CARD_WRAP_SIZE * 0.2}px;
+  height: ${CARD_WRAP_SIZE * 0.18}px;
+  filter: invert(100%) drop-shadow(0 0 0 black);
+  &:hover{
+    filter: invert(40%);
+  }
+`;
+const IconsNextBtn = styled.img.attrs({
+  src: iconsNextBtn,
+})`
+  width: ${CARD_WRAP_SIZE * 0.2}px;
+  height: ${CARD_WRAP_SIZE * 0.2}px;
+  filter: opacity(0.9) drop-shadow(0 0 0 blue);
+  &:hover {
+    filter: opacity(0.70) drop-shadow(0 0 0 #0067A3);
+  }
+`;
+
