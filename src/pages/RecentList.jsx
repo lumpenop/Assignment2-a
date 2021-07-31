@@ -19,29 +19,14 @@ export default class RecentList extends Component {
       recentFiltered: getStore('recentViewed'),
       brandList: this.setBrandList(),
     });
-    this.lowPriceViewRef.current.addEventListener(
-      'click',
-      this.onClickLowPriceView
-    );
-    this.highPriceViewRef.current.addEventListener(
-      'click',
-      this.setHighPriceOrder
-    );
-    this.recentViewRef.current.addEventListener(
-      'click',
-      this.onClickRecentView
-    );
+    this.lowPriceViewRef.current.addEventListener('click', this.onClickLowPriceView);
+    this.highPriceViewRef.current.addEventListener('click', this.setHighPriceOrder);
+    this.recentViewRef.current.addEventListener('click', this.onClickRecentView);
   }
 
-  onClickLowPriceView = () => {
-    this.setLowPriceOrder();
-  };
-  onClickHighPriceView = () => {
-    this.setHighPriceOrder();
-  };
-  onClickRecentView = () => {
-    this.setRecentViewOrder();
-  };
+  onClickLowPriceView = () => this.setLowPriceOrder();
+  onClickHighPriceView = () => this.setHighPriceOrder();
+  onClickRecentView = () => this.setRecentViewOrder();
 
   onCheckUnlike = (e) => {
     const isChecked = e.target.checked;
@@ -54,8 +39,7 @@ export default class RecentList extends Component {
     //전체브랜드 스타일 지정 미완
     if (clickedBrand === '전체브랜드') {
       brandList.forEach((brand) => {
-        if (brand.name === clickedBrand && !brand.isFilter)
-          brand.isFilter = true;
+        if (brand.name === clickedBrand && !brand.isFilter) brand.isFilter = true;
         else if (brand.name !== clickedBrand) brand.isFilter = false;
       });
       this.setState({ recentFiltered: recentProducts });
@@ -72,23 +56,19 @@ export default class RecentList extends Component {
     const productId = e.target.closest('div').id;
     this.setIsRouting(parseInt(productId));
   };
-  // 상품상세페이지 이동 미완
+
   setIsRouting = (id) => {
     const { recentProducts } = this.state;
     recentProducts.forEach((product) => {
       if (product.id === id)
         if (product.unlike) alert('해당 상품은 관심없음 대상의 상품입니다.');
-        else document.location.href = `/product`;
+        else this.props.history.push({ pathname: `/product`, state: id });
     });
   };
 
   setBrandList = () => {
-    const brandList = [
-      ...new Set(getStore('recentViewed').map((card) => card['brand'])),
-    ];
-    const brandState = brandList.map((brand) =>
-      Object.assign({ name: brand, isFilter: false })
-    );
+    const brandList = [...new Set(getStore('recentViewed').map((card) => card['brand']))];
+    const brandState = brandList.map((brand) => Object.assign({ name: brand, isFilter: false }));
     brandState.unshift({ name: '전체브랜드', isFilter: true });
     return brandState;
   };
@@ -96,9 +76,7 @@ export default class RecentList extends Component {
   setUnlikeFilter = (isChecked) => {
     const { recentProducts, recentFiltered } = this.state;
     if (isChecked) {
-      const unlikeFilteredList = recentFiltered.filter(
-        (card) => card.unlike === false
-      );
+      const unlikeFilteredList = recentFiltered.filter((card) => card.unlike === false);
       this.setState({ recentFiltered: unlikeFilteredList });
     } else this.setState({ recentFiltered: recentProducts });
   };
@@ -110,12 +88,9 @@ export default class RecentList extends Component {
       if (brand.isFilter === true) filterBrand.push(brand.name);
     });
 
-    const filteredProducts = recentProducts.filter((card) =>
-      filterBrand.includes(card.brand)
-    );
+    const filteredProducts = recentProducts.filter((card) => filterBrand.includes(card.brand));
     this.setState({
-      recentFiltered:
-        filteredProducts.length > 0 ? filteredProducts : recentProducts,
+      recentFiltered: filteredProducts.length > 0 ? filteredProducts : recentProducts,
     });
   };
 
@@ -146,11 +121,7 @@ export default class RecentList extends Component {
         <h1>상품조회이력</h1>
         <BrandButtonDiv>
           {brandList.map((brand, idx) => (
-            <BrandButton
-              key={idx}
-              isFilter={brand.isFilter}
-              onClick={(e) => this.onClickBrand(e)}
-            >
+            <BrandButton key={idx} isFilter={brand.isFilter} onClick={(e) => this.onClickBrand(e)}>
               {brand.name}
             </BrandButton>
           ))}
@@ -159,25 +130,15 @@ export default class RecentList extends Component {
             관심없는 상품 숨기기
           </UnlikeDiv>
           <ViewDiv>
-            <ViewLowPriceButton ref={this.lowPriceViewRef}>
-              낮은 가격 순
-            </ViewLowPriceButton>
-            <ViewHighPriceButton ref={this.highPriceViewRef}>
-              높은 가격 순
-            </ViewHighPriceButton>
-            <ViewRecentButton ref={this.recentViewRef}>
-              최근 조회 순
-            </ViewRecentButton>
+            <ViewLowPriceButton ref={this.lowPriceViewRef}>낮은 가격 순</ViewLowPriceButton>
+            <ViewHighPriceButton ref={this.highPriceViewRef}>높은 가격 순</ViewHighPriceButton>
+            <ViewRecentButton ref={this.recentViewRef}>최근 조회 순</ViewRecentButton>
           </ViewDiv>
         </BrandButtonDiv>
         {recentFiltered.map((recentProduct) => {
           const { id, brand, price, title } = recentProduct;
           return (
-            <ProductCardDiv
-              key={id}
-              id={id}
-              onClick={(e) => this.onClickToProductPage(e)}
-            >
+            <ProductCardDiv key={id} id={id} onClick={(e) => this.onClickToProductPage(e)}>
               <h3>{title}</h3>
               <h3>{brand}</h3>
               <h3>{price}</h3>
