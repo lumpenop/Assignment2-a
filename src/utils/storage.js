@@ -37,3 +37,10 @@ export function updateProduct(product) {
   allProducts[product.id] = product;
   localStorage.setItem('productList', JSON.stringify(allProducts));
 }
+
+export function pushRecentList(product) {
+  let recentList = getStore('recentViewed');
+  const newList = recentList.filter((item) => item.id !== product.id);
+  newList.push(product);
+  localStorage.setItem('recentViewed', JSON.stringify(newList));
+}
