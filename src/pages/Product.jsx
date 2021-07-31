@@ -5,6 +5,12 @@ import { createBrowserHistory } from 'history';
 import { saveStore, getStore, updateProduct } from '../utils/storage';
 import { MAX, RANDOM_0_MAX } from '../utils/config';
 
+import ProductCard from '../components/ProductCard';
+import iconsX from '../components/images/icons_X.png';
+import iconsNextBtn from '../components/images/icons_nextBlue.png';
+
+
+
 // TODO 1. 최근 이력, 이미 본 상품 앞으로 끌어오는거
 // TODO 2. 00시 되면 최근 이력, unlike 갱신
 
@@ -85,27 +91,56 @@ export default class Product extends Component {
 
     return (
       <Container>
-        <div className='ProductCard'>
-          <h3>{title}</h3>
-          <h3>{brand}</h3>
-          <h3>{price}</h3>
-        </div>
-        <RandomButton ref={this.randomRef}>랜덤</RandomButton>
-        <UnlikeButton ref={this.unlikeRef}>관심없음</UnlikeButton>
+        <ProductCard product={this.state.product} />
+        <RandomButton ref={this.randomRef}>
+          <IconsNextBtn />
+        </RandomButton>
+        <UnlikeButton ref={this.unlikeRef}>
+          <IconsX />
+        </UnlikeButton>
       </Container>
     );
   }
 }
 
 //TODO: CSS Styling
-const Container = styled.div``;
-
-const UnlikeButton = styled.button`
-  border: 1px solid black;
-  border-radius: 25px;
+const Container = styled.div`
+  position: relative;
+  width: 200px;
+  margin: 0 auto;
 `;
 
-const RandomButton = styled.button`
-  border: 1px solid black;
-  border-radius: 25px;
+const JustButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 6px;
 `;
+
+const UnlikeButton = styled(JustButton)``;
+
+const RandomButton = styled(JustButton)`
+  top: 160px;
+  right: 15px;
+`;
+
+const IconsX = styled.img.attrs({
+      src: iconsX,
+    })`
+  width: 38px;
+  height: 35px;
+  filter: invert(100%) drop-shadow(0 0 0 black);
+  &:hover{
+    filter: invert(40%);
+  }
+`
+const IconsNextBtn = styled.img.attrs({
+  src: iconsNextBtn,
+})`
+  width: 40px;
+  height: 40px;
+  filter: opacity(0.9) drop-shadow(0 0 0 blue);
+  &:hover {
+    filter: opacity(0.70) drop-shadow(0 0 0 #0067A3);
+  }
+`
+
