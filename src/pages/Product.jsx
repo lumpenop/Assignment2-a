@@ -56,19 +56,18 @@ export default class Product extends Component {
       this.setState({ product: { ...this.state.product, ...randomProduct } });
     }
   };
-
+  
   getProduct = (_id, _unlike) => {
     while (true) {
-<<<<<<< HEAD
       let newProduct = getStore('productList')[_id];
-=======
-      if (
-        this.state.product.id !== _id &&
-        getStore('productList')[_id].unlike === false
-      ) {
-        break;
-      }
->>>>>>> 5992ddeb8d2909434cb9b427c3558dfc84597e2a
+
+      if (this.state.product.id === _id || newProduct.unlike === true) {
+        _id = RANDOM_0_MAX();
+        newProduct = getStore('productList')[__dirname];
+        continue;
+      } else return Object.assign(newProduct, { id: _id, unlike: _unlike });
+    }
+  };
 
       if (this.state.product.id === _id || newProduct.unlike === true) {
         _id = RANDOM_0_MAX();
