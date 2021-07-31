@@ -44,3 +44,16 @@ export function pushRecentList(product) {
   newList.push(product);
   localStorage.setItem('recentViewed', JSON.stringify(newList));
 }
+
+export function isExpired() {
+  const expireDate = Number(localStorage.getItem('expireDate'));
+  const date = new Date().getDate();
+
+  if (!expireDate) {
+    localStorage.setItem('expireDate', date);
+    return false;
+  } else if (expireDate !== date) {
+    localStorage.clear();
+    return true;
+  }
+}
