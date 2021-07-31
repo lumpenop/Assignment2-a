@@ -59,7 +59,7 @@ export default class Product extends Component {
 
       if (this.state.product.id === _id || newProduct.unlike === true) {
         _id = RANDOM_0_MAX();
-        newProduct = getStore('productList')[__dirname];
+        newProduct = getStore('productList')[_id];
         continue;
       } else return Object.assign(newProduct, { id: _id, unlike: _unlike });
     }
