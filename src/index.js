@@ -8,5 +8,5 @@ ReactDOM.render(
     <GlobalStyle />
     <Routes />
   </>,
-  document.getElementById('root'),
+  document.getElementById('root')
 );
